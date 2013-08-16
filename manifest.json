@@ -1,0 +1,16 @@
+{
+	"name": "CTS2 REST UI extension",
+	"description": "This extension provides a UI for CTS2 REST services.",
+	"version": "0.1",
+	"permissions": ["tabs", "<all_urls>"],
+	"content_scripts": [
+		{
+		  "matches": ["<all_urls>"],
+		  "js" : ["contentscript.js"]
+		}
+	],
+	"web_accessible_resources": [
+		"cts2.xsl"
+	],
+	"manifest_version": 2
+}
