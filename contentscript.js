@@ -1,7 +1,7 @@
 // Based on http://stackoverflow.com/questions/14172138/
 
 function loadXml(url) {
-	request = new XMLHttpRequest();
+	var request = new XMLHttpRequest();
 	request.open("GET", url, false);
 	request.send();
 

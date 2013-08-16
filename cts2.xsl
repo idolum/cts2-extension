@@ -35,9 +35,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		<head>
 			<title>CTS2 REST UI</title>
 			<style>
-				.detail { font-size: 80%; }
+				.detail { font-size: 80%; background-color:#f8f8f8;margin:1%; }
+				.synopsis { background-color:#f0f0f0; margin:1%; }
 				dl { margin:2%; }
-				dt { margin-top: 1%; }
+				dt { margin-top: 1% }
 			</style>
 		</head>
 		<body>
@@ -84,18 +85,24 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 <xsl:template match="cs:entry|csv:entry">
 	<dt>
-		<a href="{@href}">
+		<a href="{@href}" title="Formal Name">
 			<xsl:value-of select="@formalName" />
 		</a>
 		<xsl:text> (</xsl:text>
-		<xsl:value-of select="@resourceName" />
+		<span title="Ressource Name">
+			<xsl:value-of select="@resourceName" />
+		</span>
 		<xsl:if test="@codeSystemVersionName">
 			<xsl:text>, </xsl:text>
-			<xsl:value-of select="@codeSystemVersionName" />
+			<span title="Code System Version Name">
+				<xsl:value-of select="@codeSystemVersionName" />
+			</span>
 		</xsl:if>
-		<xsl:if test="@documentURI">
+		<xsl:if test="@documentURI and @documentURI != ''">
 			<xsl:text>, </xsl:text>
-			<xsl:value-of select="@documentURI" />
+			<span title="Document URI">
+				<xsl:value-of select="@documentURI" />
+			</span>
 		</xsl:if>
 		<xsl:text>)</xsl:text>
 	</dt>
@@ -109,6 +116,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 			<xsl:apply-templates select="cs:currentVersion" />
 			<xsl:text> </xsl:text>
 			<xsl:apply-templates select="cs:versions" />
+			<xsl:text> </xsl:text>
+			<xsl:apply-templates select="csv:codeSystemVersionTag" />
 		</div>
 	</dd>
 </xsl:template>
@@ -129,6 +138,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		<xsl:value-of select="." />
 	</a>
 	<xsl:text>]</xsl:text>
+</xsl:template>
+
+<xsl:template match="csv:codeSystemVersionTag">
+	<xsl:if test=". != ''">
+		<xsl:text>[</xsl:text>
+		<xsl:value-of select="."/>
+		<xsl:text>]</xsl:text>
+	</xsl:if>	
 </xsl:template>
 
 <xsl:template match="core:officialResourceVersionId">
@@ -157,8 +174,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	<h1><xsl:value-of select="core:resourceRoot" /></h1>
 	<ul>
 		<li>Access Date: <xsl:value-of select="core:accessDate" /></li>
-		<xsl:if test="../@next">
+		<xsl:if test="../@next|../@prev">
 			<li>
+				<xsl:if test="../@prev">
+					<a href="{../@prev}">Previous Entries</a>
+				</xsl:if>
+				<xsl:text> </xsl:text>
 				<a href="{../@next}">Next Entries</a>
 			</li>
 		</xsl:if>
