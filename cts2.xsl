@@ -25,6 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:cs="http://schema.omg.org/spec/CTS2/1.0/CodeSystem"
 	xmlns:csv="http://schema.omg.org/spec/CTS2/1.0/CodeSystemVersion"
+	xmlns:css="http://schema.omg.org/spec/CTS2/1.0/CoreService"
 	xmlns:core="http://schema.omg.org/spec/CTS2/1.0/Core"
 	version="1.0">
 
@@ -46,7 +47,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				select="
 					cs:CodeSystemCatalogEntryDirectory
 						| cs:CodeSystemCatalogEntryMsg
-						| csv:CodeSystemVersionCatalogEntryDirectory" />
+						| csv:CodeSystemVersionCatalogEntryDirectory
+						| css:BaseService" />
 		</body>
 	</html>
 </xsl:template>
@@ -148,6 +150,65 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	</xsl:if>	
 </xsl:template>
 
+<!--
+	Ressource service
+-->
+
+<xsl:template match="css:BaseService">
+	<h1>
+		<xsl:text>Service </xsl:text>
+		<xsl:value-of select="css:serviceName" />
+		<xsl:text> </xsl:text>
+		<xsl:value-of select="css:serviceVersion" />
+	</h1>
+	<p>
+		<xsl:value-of select="css:serviceDescription/core:value" />
+	</p>
+	<p>
+		<xsl:text>Provided by </xsl:text>
+		<xsl:value-of select="css:serviceProvider" />
+	</p>
+	<h2>Default Format</h2>
+	<ul>
+		<xsl:apply-templates select="css:defaultFormat" />
+	</ul>
+	<h2>Supported Formats</h2>
+	<ul>
+		<xsl:apply-templates select="css:supportedFormat" />
+	</ul>
+	<h2>Supported Profiles</h2>
+	<ul>
+		<xsl:apply-templates select="css:supportedProfile" />
+	</ul>
+</xsl:template>
+
+<xsl:template match="css:supportedProfile">
+	<li>
+		<span title="Structural Profile">
+			<xsl:value-of select="css:structuralProfile" />
+		</span>
+		<xsl:text>, </xsl:text>
+		<a href="{css:functionalProfile/@href}" title="Functional Profile">
+			<xsl:value-of select="css:functionalProfile" />
+		</a>
+	</li>
+</xsl:template>
+
+<xsl:template match="css:defaultFormat">
+	<li>
+		<xsl:value-of select="." />
+	</li>
+</xsl:template>
+
+<xsl:template match="css:supportedFormat">
+	<li>
+		<xsl:value-of select="." />
+	</li>
+</xsl:template>
+
+<!--
+	Core elements
+-->
 <xsl:template match="core:officialResourceVersionId">
 	<xsl:text>[Version: </xsl:text>
 	<xsl:value-of select="." />
