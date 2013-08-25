@@ -26,10 +26,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	xmlns:cs="http://schema.omg.org/spec/CTS2/1.0/CodeSystem"
 	xmlns:csv="http://schema.omg.org/spec/CTS2/1.0/CodeSystemVersion"
 	xmlns:css="http://schema.omg.org/spec/CTS2/1.0/CoreService"
+	xmlns:vls="http://schema.omg.org/spec/CTS2/1.0/ValueSet"
 	xmlns:core="http://schema.omg.org/spec/CTS2/1.0/Core"
 	version="1.0">
 
 <xsl:output method="html" omit-xml-declaration="yes"/>
+
+<!--
+	Root
+-->
 
 <xsl:template match="/">
 	<html>
@@ -48,18 +53,29 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 					cs:CodeSystemCatalogEntryDirectory
 						| cs:CodeSystemCatalogEntryMsg
 						| csv:CodeSystemVersionCatalogEntryDirectory
-						| css:BaseService" />
+						| css:BaseService
+						| vls:ValueSetCatalogEntryDirectory
+						| vls:ValueSetCatalogEntryMsg" />
 		</body>
 	</html>
 </xsl:template>
 
+<!--
+	Directories
+-->
+
 <xsl:template
 	match="
 		cs:CodeSystemCatalogEntryDirectory
-			| csv:CodeSystemVersionCatalogEntryDirectory">
+			| csv:CodeSystemVersionCatalogEntryDirectory
+			| vls:ValueSetCatalogEntryDirectory">
 	<xsl:apply-templates select="core:heading" />
 	<dl>
-		<xsl:apply-templates select="cs:entry|csv:entry" />
+		<xsl:apply-templates
+			select="
+				cs:entry
+					| csv:entry
+					| vls:entry" />
 	</dl>
 </xsl:template>
 
@@ -71,41 +87,52 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <xsl:template match="cs:codeSystemCatalogEntry">
 	<h2><xsl:value-of select="@formalName" /></h2>
 	<xsl:apply-templates select="core:resourceSynopsis" />
-	<table>
-		<thead>
-			<tr>
-				<th>Typ</th>
-				<th>Name</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-		<tbody>
-			<xsl:apply-templates select="core:sourceAndRole|core:property" />
-		</tbody>
-	</table>
+	<xsl:call-template name="Properties" />
 </xsl:template>
 
-<xsl:template match="cs:entry|csv:entry">
+<xsl:template match="@resourceName">
+		<span title="Ressource Name">
+			<xsl:value-of select="." />
+		</span>
+	<xsl:if test="position() != last()">
+		<xsl:text>, </xsl:text>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template match="@codeSystemVersionName">
+	<span title="Code System Version Name">
+		<xsl:value-of select="." />
+	</span>
+	<xsl:if test="position() != last()">
+		<xsl:text>, </xsl:text>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template match="@valueSetName">
+	<span title="Valueset Name">
+		<xsl:value-of select="." />
+	</span>
+	<xsl:if test="position() != last()">
+		<xsl:text>, </xsl:text>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template match="@documentURI">
+	<span title="Document URI">
+		<xsl:value-of select="." />
+	</span>
+	<xsl:if test="position() != last()">
+		<xsl:text>, </xsl:text>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template match="cs:entry|csv:entry|vls:entry">
 	<dt>
 		<a href="{@href}" title="Formal Name">
 			<xsl:value-of select="@formalName" />
 		</a>
 		<xsl:text> (</xsl:text>
-		<span title="Ressource Name">
-			<xsl:value-of select="@resourceName" />
-		</span>
-		<xsl:if test="@codeSystemVersionName">
-			<xsl:text>, </xsl:text>
-			<span title="Code System Version Name">
-				<xsl:value-of select="@codeSystemVersionName" />
-			</span>
-		</xsl:if>
-		<xsl:if test="@documentURI and @documentURI != ''">
-			<xsl:text>, </xsl:text>
-			<span title="Document URI">
-				<xsl:value-of select="@documentURI" />
-			</span>
-		</xsl:if>
+		<xsl:apply-templates select="@*" />
 		<xsl:text>)</xsl:text>
 	</dt>
 	<dd>
@@ -148,6 +175,32 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		<xsl:value-of select="."/>
 		<xsl:text>]</xsl:text>
 	</xsl:if>	
+</xsl:template>
+
+<!--
+	ValueSetCatalogEntryMsg
+-->
+
+<xsl:template match="vls:ValueSetCatalogEntryMsg">
+	<xsl:apply-templates select="vls:valueSetCatalogEntry" />
+</xsl:template>
+
+<xsl:template match="vls:valueSetCatalogEntry">
+	<h1>
+		<xsl:text>Valueset </xsl:text>
+		<xsl:value-of select="@formalName" />
+	</h1>
+	<xsl:apply-templates select="core:resourceSynopsis" />
+	<xsl:apply-templates select="vls:definitions" />
+	<xsl:call-template name="Properties" />
+</xsl:template>
+
+<xsl:template match="vls:definitions">
+	<div class="detail">
+		<a href="{.}">
+			<xsl:text>Definitions</xsl:text>
+		</a>
+	</div>
 </xsl:template>
 
 <!--
@@ -209,6 +262,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <!--
 	Core elements
 -->
+
+<xsl:template name="Properties">
+	<table>
+		<thead>
+			<tr>
+				<th>Typ</th>
+				<th>Name</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+		<tbody>
+			<xsl:apply-templates select="core:sourceAndRole|core:property" />
+		</tbody>
+	</table>
+</xsl:template>
+
 <xsl:template match="core:officialResourceVersionId">
 	<xsl:text>[Version: </xsl:text>
 	<xsl:value-of select="." />
