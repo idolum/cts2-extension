@@ -23,11 +23,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -->
 <xsl:stylesheet
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:cs="http://schema.omg.org/spec/CTS2/1.0/CodeSystem"
-	xmlns:csv="http://schema.omg.org/spec/CTS2/1.0/CodeSystemVersion"
-	xmlns:css="http://schema.omg.org/spec/CTS2/1.0/CoreService"
-	xmlns:vls="http://schema.omg.org/spec/CTS2/1.0/ValueSet"
-	xmlns:core="http://schema.omg.org/spec/CTS2/1.0/Core"
+	xmlns:cs="http://www.omg.org/spec/CTS2/1.1/CodeSystem"
+	xmlns:csv="http://www.omg.org/spec/CTS2/1.1/CodeSystemVersion"
+	xmlns:css="http://www.omg.org/spec/CTS2/1.1/CoreService"
+	xmlns:vls="http://www.omg.org/spec/CTS2/1.1/ValueSet"
+	xmlns:core="http://www.omg.org/spec/CTS2/1.1/Core"
 	version="1.0">
 
 <xsl:output method="html" omit-xml-declaration="yes"/>
